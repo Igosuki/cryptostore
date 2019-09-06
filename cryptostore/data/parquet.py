@@ -13,6 +13,7 @@ import pyarrow.parquet as pq
 from cryptostore.data.store import Store
 from cryptostore.data.gc import google_cloud_write, google_cloud_read, google_cloud_list
 from cryptostore.data.s3 import aws_write, aws_read, aws_list
+from cryptostore.data.local_fs import tmp_write, tmp_read, tmp_list
 from cryptostore.exceptions import InconsistentStorage
 
 
@@ -44,6 +45,12 @@ class Parquet(Store):
                 self.bucket.append(config['S3']['bucket'])
                 self.prefix.append(config['S3']['prefix'])
                 self.kwargs.append({'creds': (config['S3']['key_id'], config['S3']['secret'])})
+            if 'TMP_FS' in config:
+                self._write.append(tmp_write)
+                self._read.append(tmp_read)
+                self._list.append(tmp_list)
+                self.bucket.append(config['TMP_FS']['basedir'])
+                self.prefix.append(config['TMP_FS']['prefix'])
 
     def aggregate(self, data):
         names = list(data[0].keys())
