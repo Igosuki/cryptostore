@@ -24,25 +24,27 @@ redis:
 # Data sources and data types configured under exchanges. Exchange names follow the naming scheme in cryptofeed (they
 # must be capitalized) and only exchanges supported by cryptofeed are supported.
 # data types follow cryptofeed definitions, see defines.py in cryptofeed for more details, common ones are
-# trades, l2_book, l3_book, funding, ticker (only trades, l2_book, l3_book currently supported by cryptostore).
+# trades, l2_book, l3_book, funding, ticker
 # Trading pairs for all exchanges (except BitMEX) follow the currency-quote format
 #
-# book_depth controls the size of the book to return. The top N levels will be returned, only when those N levels
+# max_depth controls the size of the book to return. The top N levels will be returned, only when those N levels
 # have changed.
 # book_delta enables book deltas (snapshot, then only deltas are delivered). Snapshops are delivered
 # every book_interval updates. book_interval defaults to 1000 if not specified
-# Cannot enable book deltas with book_depth (delta will be ignored if depth enabled).
-# Not all exchanges support deltas
 #
-# Retries are the number of times the connection to the exchange will be retried before exiting. -1 is infinity
+# Retries are the number of times the connection to the exchange will be retried before exiting. -1 is infinity.
+# Using a retry of -1 with a bug in your config can lead to bans by exchanges
 
 exchanges:
     BITMEX:
         retries: -1
         l2_book:
             symbols: [XBTUSD]
-            book_depth: 10
+            max_depth: 10
+            book_delta: true
         trades: [XBTUSD]
+        ticker: [XBTUSD]
+        funding: [XBTUSD]
     COINBASE:
         retries: -1
         l3_book:
@@ -50,6 +52,8 @@ exchanges:
             book_delta: true
             book_interval: 10000
         trades: [BTC-USD, ETH-USD, ETH-BTC]
+        ticker: [BTC-USD]
+
 
 # Where to store the data. Currently arctic, influx, elastic, and parquet are supported. More than one can be enabled
 storage: [arctic, influx]

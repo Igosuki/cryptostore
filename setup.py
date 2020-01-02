@@ -18,7 +18,7 @@ except BaseException:
 
 setup(
     name="cryptostore",
-    version="0.1.1",
+    version="0.2.0",
     author="Bryant Moscon",
     author_email="bmoscon@gmail.com",
     description=("Storage engine for cryptocurrency data"),
@@ -31,6 +31,7 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     install_requires=[
         "pandas",
