@@ -8,14 +8,16 @@ from cryptostore.engines import StorageEngines
 import os
 from shutil import copyfile
 
-def tmp_write(bucket, key, data):
+def tmp_write(bucket, key, data, **kwargs):
+    dest = os.sep.join([bucket, key])
+    os.makedirs(os.path.dirname(dest), exist_ok=True)
     with open(data, 'rb') as fp:
-        copyfile(data, os.sep.join([bucket, key, data]))
+        copyfile(data, dest)
 
 
-def tmp_list(bucket, key, limit=None):
+def tmp_list(bucket, key, **kwargs):
     os.listdir(os.sep.join([bucket, key]))
 
 
-def tmp_read(bucket, key, file_name):
+def tmp_read(bucket, key, file_name, **kwargs):
     os.sep.join([bucket, key, file_name])

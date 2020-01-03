@@ -60,11 +60,11 @@ class Aggregator(Process):
                                 continue
                             for pair in self.config.exchanges[exchange][dtype] if 'symbols' not in self.config.exchanges[exchange][dtype] else self.config.exchanges[exchange][dtype]['symbols']:
                                 store = Storage(self.config)
-                                LOG.info('Reading %s-%s-%s', exchange, dtype, pair)
+                                LOG.debug('Reading %s-%s-%s', exchange, dtype, pair)
 
                                 data = cache.read(exchange, dtype, pair)
                                 if len(data) == 0:
-                                    LOG.info('No data for %s-%s-%s', exchange, dtype, pair)
+                                    LOG.debug('No data for %s-%s-%s', exchange, dtype, pair)
                                     continue
 
                                 store.aggregate(data)

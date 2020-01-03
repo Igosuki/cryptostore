@@ -14,7 +14,7 @@ from cryptostore.data.store import Store
 
 
 def chunk(iterable, length):
-    return (iterable[i : i + length] for i in range(0, len(iterable), length))
+    return (iterable[i: i + length] for i in range(0, len(iterable), length))
 
 
 class InfluxDB(Store):
@@ -44,30 +44,36 @@ class InfluxDB(Store):
                     ts += 1
                 used_ts[pair].add(ts)
                 if 'id' in entry:
-                    agg.append(f'{data_type}-{exchange},pair={pair} side="{entry["side"]}",id="{entry["id"]}",amount={entry["amount"]},price={entry["price"]},timestamp={entry["timestamp"]} {ts}')
+                    agg.append(
+                        f'{data_type}-{exchange},pair={pair} side="{entry["side"]}",id="{entry["id"]}",amount={entry["amount"]},price={entry["price"]},timestamp={entry["timestamp"]} {ts}')
                 else:
-                    agg.append(f'{data_type}-{exchange},pair={pair} side="{entry["side"]}",amount={entry["amount"]},price={entry["price"]},timestamp={entry["timestamp"]} {ts}')
+                    agg.append(
+                        f'{data_type}-{exchange},pair={pair} side="{entry["side"]}",amount={entry["amount"]},price={entry["price"]},timestamp={entry["timestamp"]} {ts}')
         elif data_type == TICKER:
             for entry in self.data:
                 ts = int(Decimal(entry["timestamp"]) * 1000000000)
-                agg.append(f'{data_type}-{exchange},pair={pair} bid={entry["bid"]},ask={entry["ask"]},timestamp={entry["timestamp"]} {ts}')
+                agg.append(
+                    f'{data_type}-{exchange},pair={pair} bid={entry["bid"]},ask={entry["ask"]},timestamp={entry["timestamp"]} {ts}')
 
         elif data_type == L2_BOOK:
             if len(self.data):
                 ts = int(Decimal(self.data[0]["timestamp"]) * 1000000000)
             for entry in self.data:
-                agg.append(f'{data_type}-{exchange},pair={pair},delta={entry["delta"]} side="{entry["side"]}",timestamp={entry["timestamp"]},price={entry["price"]},amount={entry["size"]} {ts}')
+                agg.append(
+                    f'{data_type}-{exchange},pair={pair},delta={entry["delta"]} side="{entry["side"]}",timestamp={entry["timestamp"]},price={entry["price"]},amount={entry["size"]} {ts}')
                 ts += 1
         elif data_type == L3_BOOK:
             if len(self.data):
                 ts = int(Decimal(self.data[0]["timestamp"]) * 1000000000)
             for entry in self.data:
-                agg.append(f'{data_type}-{exchange},pair={pair},delta={entry["delta"]} side="{entry["side"]}",id="{entry["order_id"]}",timestamp={entry["timestamp"]},price="{entry["price"]}",amount="{entry["size"]}" {ts}')
+                agg.append(
+                    f'{data_type}-{exchange},pair={pair},delta={entry["delta"]} side="{entry["side"]}",id="{entry["order_id"]}",timestamp={entry["timestamp"]},price="{entry["price"]}",amount="{entry["size"]}" {ts}')
                 ts += 1
         elif data_type == FUNDING:
             for entry in self.data:
                 formatted = [f"{key}={value}" for key, value in entry.items() if isinstance(value, float)]
-                formatted = ','.join(formatted + [f'{key}="{value}"' for key, value in entry.items() if not isinstance(value, float)])
+                formatted = ','.join(
+                    formatted + [f'{key}="{value}"' for key, value in entry.items() if not isinstance(value, float)])
                 agg.append(f'{data_type}-{exchange},pair={pair} {formatted}')
 
         for c in chunk(agg, 100000):
@@ -78,7 +84,8 @@ class InfluxDB(Store):
 
     def get_start_date(self, exchange: str, data_type: str, pair: str) -> float:
         try:
-            r = requests.get(f"{self.host}/query?db={self.db}", params={'q': f'SELECT first(timestamp) from "{data_type}-{exchange}" where pair=\'{pair}\''})
+            r = requests.get(f"{self.host}/query?db={self.db}", params={
+                'q': f'SELECT first(timestamp) from "{data_type}-{exchange}" where pair=\'{pair}\''})
             return r.json()['results'][0]['series'][0]['values'][0][1]
         except Exception:
             return None

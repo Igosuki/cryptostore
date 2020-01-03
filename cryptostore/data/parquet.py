@@ -51,6 +51,7 @@ class Parquet(Store):
                 self._list.append(tmp_list)
                 self.bucket.append(config['TMP_FS']['basedir'])
                 self.prefix.append(config['TMP_FS']['prefix'])
+                self.kwargs.append({'limit': -1})
 
     def aggregate(self, data):
         names = list(data[0].keys())
