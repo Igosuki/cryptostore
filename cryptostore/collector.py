@@ -30,7 +30,8 @@ class Collector(Process):
         retries = self.exchange_config.pop('retries', 30)
         fh = FeedHandler(retries=retries)
 
-
+        feed_config = {}
+        callbacks = {}
         for callback_type, value in self.exchange_config.items():
             cb = {}
             depth = None
@@ -100,7 +101,8 @@ class Collector(Process):
                         cb[L3_BOOK].append(BookZMQ(host=host, port=port, zmq_type=zmq.PUB))
                     if BOOK_DELTA in cb:
                         cb[BOOK_DELTA].append(BookDeltaZMQ(host=host, port=port, zmq_type=zmq.PUB))
-
-            fh.add_feed(self.exchange, max_depth=depth, book_interval=window, config={callback_type: self.exchange_config[callback_type]}, callbacks=cb)
+            feed_config[callback_type] = self.exchange_config[callback_type]
+            callbacks.update(cb)
+        fh.add_feed(self.exchange, max_depth=depth, book_interval=window, config=feed_config, callbacks=callbacks)
 
         fh.run()
