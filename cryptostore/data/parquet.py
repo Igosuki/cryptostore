@@ -44,7 +44,7 @@ class Parquet(Store):
                 self._list.append(aws_list)
                 self.bucket.append(config['S3']['bucket'])
                 self.prefix.append(config['S3']['prefix'])
-                self.kwargs.append({'creds': (config['S3']['key_id'], config['S3']['secret'])})
+                self.kwargs.append({'endpoint_url': config['S3']['endpoint_url'], 'region_name': config['S3']['region_name'], 'creds': (config['S3']['key_id'], config['S3']['secret'])})
             if 'TMP_FS' in config:
                 self._write.append(tmp_write)
                 self._read.append(tmp_read)

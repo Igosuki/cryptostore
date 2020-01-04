@@ -7,8 +7,10 @@ associated with this software.
 from cryptostore.engines import StorageEngines
 
 
-def aws_write(bucket, key, data, creds=(None, None)):
+def aws_write(bucket, key, data, creds=(None, None), region_name=None, endpoint_url=None):
     client = StorageEngines.boto3.client('s3',
+        region_name=region_name,
+        endpoint_url=endpoint_url,
         aws_access_key_id=creds[0],
         aws_secret_access_key=creds[1]
     )
@@ -17,8 +19,10 @@ def aws_write(bucket, key, data, creds=(None, None)):
         client.upload_fileobj(fp, bucket, key)
 
 
-def aws_list(bucket, key, creds=(None, None), limit=None):
+def aws_list(bucket, key, creds=(None, None), region_name=None, endpoint_url=None, limit=None):
     client = StorageEngines.boto3.client('s3',
+        region_name=region_name,
+        endpoint_url=endpoint_url,
         aws_access_key_id=creds[0],
         aws_secret_access_key=creds[1]
     )
@@ -38,8 +42,10 @@ def aws_list(bucket, key, creds=(None, None), limit=None):
     return None
 
 
-def aws_read(bucket, key, file_name, creds=(None, None)):
+def aws_read(bucket, key, file_name, creds=(None, None), region_name=None, endpoint_url=None):
     client = StorageEngines.boto3.client('s3',
+        region_name=region_name,
+        endpoint_url=endpoint_url,
         aws_access_key_id=creds[0],
         aws_secret_access_key=creds[1]
     )
